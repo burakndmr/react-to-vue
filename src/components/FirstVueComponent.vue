@@ -30,29 +30,41 @@
             :key="index"
           >
             <div class="flex items-center">
-              <!-- Checkbox -->
-              <!-- <input type="checkbox" v-model="item.isChecked" class="mr-2" /> -->
-              <!-- Görev Adı -->
+              <!-- Görev Adı veya Düzenleme Inputu -->
               <span
+                v-if="!item.editMode"
                 @click="toggleIsChecked(item)"
                 :class="{ 'line-through text-gray-500': item.isChecked }"
               >
                 {{ item.name }}
               </span>
+              <input
+                v-else
+                type="text"
+                class="border border-gray-700 bg-transparent rounded-sm"
+                v-model="item.name"
+              />
             </div>
-            <button
-              @click="deleteTodo(index)"
-              class="px-3 py-1 bg-red-600 text-white font-bold rounded-md"
-            >
-              Sil
-            </button>
+            <div class="flex items-center justify-center gap-2">
+              <button
+                @click="editModeToggle(item)"
+                class="px-3 py-1 bg-blue-600 text-white font-bold rounded-md"
+              >
+                {{ item.editMode ? 'Kaydet' : 'Düzenle' }}
+              </button>
+              <button
+                @click="deleteTodo(index)"
+                class="px-3 py-1 bg-red-600 text-white font-bold rounded-md"
+              >
+                Sil
+              </button>
+            </div>
           </li>
         </ul>
       </div>
     </div>
   </div>
 </template>
-
 <script>
 import { ref, reactive } from 'vue'
 
@@ -72,7 +84,7 @@ export default {
 
     const addNewTodo = () => {
       if (newTodoItem.name.trim() !== '') {
-        todos.push({ ...newTodoItem })
+        todos.push({ ...newTodoItem, editMode: false })
         newTodoItem.name = ''
         newTodoItem.isChecked = false
       }
@@ -81,16 +93,27 @@ export default {
     }
 
     const toggleIsChecked = (item) => {
-      // write function for me
-
       item.isChecked = !item.isChecked
+    }
+
+    const editModeToggle = (item) => {
+      item.editMode = !item.editMode
     }
 
     const deleteTodo = (index) => {
       todos.splice(index, 1)
     }
 
-    return { number, increase, newTodoItem, todos, addNewTodo, deleteTodo, toggleIsChecked }
+    return {
+      number,
+      increase,
+      newTodoItem,
+      todos,
+      addNewTodo,
+      deleteTodo,
+      toggleIsChecked,
+      editModeToggle
+    }
   }
 }
 </script>
